@@ -16,3 +16,22 @@
 const Route = use('Route')
 
 Route.on('/').render('welcome')
+
+//api
+Route.post('api/v1/user/login', 'Api/v1/UserController.getToken')
+Route
+    .group(() => {        
+        // Route.get('user/info', 'UserController.getUserInfo')
+        // Route.post('user/logout', 'UserController.logout')
+        // Route.put('user/password', 'UserController.updatePassword')        
+        Route.resource('image', 'ImageController')
+        Route.resource('banner', 'BannerController')
+        Route.resource('category', 'CategoryController')
+        Route.resource('product', 'ProductController')
+        Route.resource('order', 'OrderController')        
+        Route.get('order/user/:id', 'Order.getOrderByUser');
+        
+    })
+    .prefix('api/v1')
+    .namespace('Api/v1')
+    // .middleware('auth:jwt')
