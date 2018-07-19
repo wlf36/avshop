@@ -29,8 +29,11 @@ Route
         Route.resource('category', 'CategoryController')
         Route.resource('product', 'ProductController')
         Route.resource('order', 'OrderController')        
-        Route.get('order/user/:id', 'Order.getOrderByUser');
-        
+        Route.get('order/user/:id', 'Order.getOrderByUser')
+        Route.post('getopenid', 'WxPayController.getOpenid')
+        Route.post('wxpay/pay', 'WxPayController.pay')
+        Route.post('wxpay/notify', 'WxPayController.wxPayNotify')
+        Route.post('wxpay/query', 'WxPayController.query')
     })
     .prefix('api/v1')
     .namespace('Api/v1')
