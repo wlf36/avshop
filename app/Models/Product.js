@@ -10,12 +10,23 @@ class Product extends Model {
         return this.hasMany('App/Models/ProductMeta', 'id', 'product_id')
     }  
     
+    category() {
+        return this.belongsToMany('App/Models/Category')
+            .pivotTable('product_categories')
+    }
+
+    tag() {
+        return this.belongsToMany('App/Models/Tag')
+        .pivotTable('product_tags')
+    }
+
     static async getProduct (id) {
       return await Product.query()
-        .where('id', id)
-        .where('status', 'publish')
+        .where('id', id)        
         .with('image')
         .with('meta')
+        .with('category')
+        .with('tag')
         .fetch()
     }
 

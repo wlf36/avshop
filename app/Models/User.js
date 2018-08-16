@@ -32,10 +32,10 @@ class User extends Model {
     return this.hasMany('App/Models/Token')
   }
 
-
   meta () {
     return this.hasMany('App/Models/UserMeta')
   }
+  
 }
 
 module.exports = User

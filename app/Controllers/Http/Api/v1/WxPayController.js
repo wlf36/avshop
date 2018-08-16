@@ -6,6 +6,7 @@ const queryString  = use('querystring')
 const convert      = use('xml-js')
 const axios        = use('axios')
 const WxPayService = use('App/Services/WxPay')
+const Order        = use('App/Models/Order')   
 
 class WxPayController {  
   /**
@@ -75,8 +76,7 @@ class WxPayController {
     const trade_type = 'JSAPI'
 
     /** 用户 IP */
-    // const spbill_create_ip = request.header('x-real-ip') 
-    const spbill_create_ip = '127.0.0.1' 
+    const spbill_create_ip = request.ip() 
 
     /** 通知地址 */
     const notify_url = Config.get('wxpay.notify_url')
@@ -120,6 +120,9 @@ class WxPayController {
      */
     const timeStamp = moment().local().unix()
     const prepay_id = data.prepay_id
+
+    //更新order prepay_id
+    // await Order.query().where('id', orderId).update({'prepay_id': prepay_id})
 
     let wxJSApiParams = {
       appId: appid,

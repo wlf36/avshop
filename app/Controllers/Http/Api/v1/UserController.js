@@ -2,14 +2,71 @@
 const User = use('App/Models/User')
 const Token = use('App/Models/Token')
 const Hash = use('Hash')
+const UserMeta = use('App/Models/UserMeta')
 
-class UserController {    
+class UserController {  
+    
+    async createAddress ({ request, auth }) {
+        const user = await auth.getUser()    
+        const uid = user.id 
+        const { userName, postalCode, provinceName, cityName, countyName, detailInfo, telNumber } = request.all()
+        const data = [
+            {
+                user_id: uid,
+                meta_key: "userName",
+                meta_value: userName
+            },
+            {
+                user_id: uid,
+                meta_key: "postalCode",
+                meta_value: postalCode
+            },
+            {
+                user_id: uid,
+                meta_key: "provinceName",
+                meta_value: provinceName
+            },
+            {
+                user_id: uid,
+                meta_key: "cityName",
+                meta_value: cityName
+            },
+            {
+                user_id: uid,
+                meta_key: "countyName",
+                meta_value: countyName
+            },
+            {
+                user_id: uid,
+                meta_key: "detailInfo",
+                meta_value: detailInfo
+            },
+            {
+                user_id: uid,
+                meta_key: "telNumber",
+                meta_value: telNumber
+            }
+        ]
+        await UserMeta.createMany(data)
+    }
+
+    async getAddress ({ auth }) {
+        const user = await auth.getUser()    
+        const uid = user.id 
+        const _userMeta = await UserMeta.query().where('user_id', uid).fetch()
+        const userMeta = _userMeta.toJSON()
+        let address = {}
+        userMeta.map((item) => {            
+            address[item.meta_key] = item.meta_value
+        }) 
+        return address
+    }
 
     async getToken ({ request, auth, response }) {
 
         const { username, password } = request.all()        
         const token = await auth.withRefreshToken().attempt(username, password) 
-        console.log(token)        
+        // console.log(token)        
         return {
             code: 200, 
             data: token
@@ -20,7 +77,7 @@ class UserController {
         //通过token得到用户
         const _user = await auth.getUser()
         let user = _user.toJSON()        
-        user.roles = user.roles.split(",")
+        user.roles = user.roles.split(",")        
         return {
             code: 200,
             data: user
@@ -67,6 +124,20 @@ class UserController {
             type: 'success'
         })
     }
+    
+    async getUser ({ request, response }) { 
+        const perpage = 10
+        const page = request.input('page')  
+        const users = await User.query()            
+            .orderBy('id', 'desc')
+            .paginate(page, perpage)        
+
+        return response.send({
+            code: 200,
+            data: users
+        })
+    }
+
 }
 
 module.exports = UserController

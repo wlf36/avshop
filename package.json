@@ -27,6 +27,7 @@
     "@adonisjs/session": "^1.0.25",
     "@adonisjs/shield": "^1.0.6",
     "@adonisjs/validator": "^5.0.3",
+    "async": "^2.6.1",
     "axios": "^0.18.0",
     "moment": "^2.22.2",
     "mysql": "^2.15.0",

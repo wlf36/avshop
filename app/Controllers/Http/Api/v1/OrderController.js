@@ -8,8 +8,17 @@ class OrderController {
 
   }
 
-  async index ({ response }) {    
-   
+  async index ({ request, response }) {  
+    const perpage = 10
+    const page = request.input('page')  
+    const orders = await OrderModel.query()  
+      .with('product')          
+      .orderBy('id', 'desc')
+      .paginate(page, perpage)
+    return response.send({
+        code: 200,
+        data: orders
+    })
   }
 
   async create () {
