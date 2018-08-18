@@ -17,13 +17,11 @@ const Route = use("Route");
 
 Route.on("/").render("welcome");
 
-//api
 Route.group(() => {
         Route.post("getopenid", "WxPayController.getOpenid");
         Route.post("user/login", "UserController.getToken");
         Route.get("getallcategory", "CategoryController.getAllCategory");
         Route.get("getalltag", "TagController.getAllTag");
-        Route.get("tag", "TagController.index");
     })
     .prefix("api/v1")
     .namespace("Api/v1");
@@ -34,7 +32,7 @@ Route.group(() => {
         Route.put("user/password", "UserController.updatePassword");
         Route.get("user/getaddress", "UserController.getAddress");
         Route.post("user/address", "UserController.createAddress");
-        Route.get("order/user/:id", "Order.getOrderByUser");
+        Route.get("order/user/:id", "OrderController.getOrderByUser");
         Route.post("wxpay/pay", "WxPayController.pay");
         Route.post("wxpay/notify", "WxPayController.wxPayNotify");
         Route.post("wxpay/query", "WxPayController.query");
@@ -44,8 +42,7 @@ Route.group(() => {
     .middleware("auth:jwt");
 
 Route.group(() => {
-        Route.get("user", "UserController.getUser");
-        Route.delete("tag/:id", "TagController.destroy");
+        Route.get("user", "UserController.getUser");        
         Route.delete("product/:id/removecat", "ProductController.removeCat");
         Route.delete("product/:id/removetag", "ProductController.removeTag");
     })
@@ -56,6 +53,14 @@ Route.group(() => {
 
 Route.group(() => {
         Route.resource("banner", "BannerController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("image", "ImageController").middleware(
             new Map([
                 [
                     ["store", "update", "destroy"],
@@ -79,6 +84,14 @@ Route.group(() => {
                 ]
             ])
         )
+        Route.resource("tag", "TagController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
         Route.resource("product", "ProductController").middleware(
             new Map([
                 [
@@ -88,17 +101,9 @@ Route.group(() => {
             ])
         )
         Route.resource("order", "OrderController").middleware(
-            new Map([
+            new Map([                
                 [
-                    ["store", "update", "destroy"],
-                    ["auth:jwt", "role:admin"]
-                ]
-            ])
-        )
-        Route.resource("image", "ImageController").middleware(
-            new Map([
-                [
-                    ["store", "update", "destroy"],
+                    ["index", "store", "update", "destroy"],
                     ["auth:jwt", "role:admin"]
                 ]
             ])
