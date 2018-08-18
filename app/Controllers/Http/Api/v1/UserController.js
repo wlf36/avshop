@@ -73,10 +73,9 @@ class UserController {
         }         
     }
 
-    async getUserInfo ({ auth }) {        
-        //通过token得到用户
+    async getUserInfo ({ auth }) {         
         const _user = await auth.getUser()
-        let user = _user.toJSON()        
+        let user = _user.toJSON()  
         user.roles = user.roles.split(",")        
         return {
             code: 200,

@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 /*
 |--------------------------------------------------------------------------
@@ -13,38 +13,96 @@
 |
 */
 
-const Route = use('Route')
+const Route = use("Route");
 
-Route.on('/').render('welcome')
+Route.on("/").render("welcome");
 
 //api
-Route.post('api/v1/user/login', 'Api/v1/UserController.getToken')
-Route
-    .group(() => {   
-        Route.get('user', 'UserController.getUser')     
-        Route.get('user/info', 'UserController.getUserInfo')
-        Route.post('user/logout', 'UserController.logout')
-        Route.put('user/password', 'UserController.updatePassword') 
-        Route.post('user/address', 'UserController.createAddress') 
-        Route.get('user/getaddress', 'UserController.getAddress')       
-        Route.resource('image', 'ImageController')
-        Route.resource('banner', 'BannerController')
-        Route.resource('vocabulary', 'VocabularyController')
-        Route.get('getallcategory', 'CategoryController.getAllCategory')
-        Route.resource('category', 'CategoryController')  
-        Route.get('getalltag', 'TagController.getAllTag')      
-        Route.get('tag', 'TagController.index')        
-        Route.delete('tag/:id', 'TagController.destroy')
-        Route.delete('product/:id/removecat', 'ProductController.removeCat')
-        Route.delete('product/:id/removetag', 'ProductController.removeTag')
-        Route.resource('product', 'ProductController')
-        Route.resource('order', 'OrderController')                
-        Route.get('order/user/:id', 'Order.getOrderByUser')
-        Route.post('getopenid', 'WxPayController.getOpenid')
-        Route.post('wxpay/pay', 'WxPayController.pay')
-        Route.post('wxpay/notify', 'WxPayController.wxPayNotify')
-        Route.post('wxpay/query', 'WxPayController.query')
+Route.group(() => {
+        Route.post("getopenid", "WxPayController.getOpenid");
+        Route.post("user/login", "UserController.getToken");
+        Route.get("getallcategory", "CategoryController.getAllCategory");
+        Route.get("getalltag", "TagController.getAllTag");
+        Route.get("tag", "TagController.index");
     })
-    .prefix('api/v1')
-    .namespace('Api/v1')
-    .middleware('auth:jwt')
+    .prefix("api/v1")
+    .namespace("Api/v1");
+
+Route.group(() => {
+        Route.get("user/info", "UserController.getUserInfo");
+        Route.post("user/logout", "UserController.logout");
+        Route.put("user/password", "UserController.updatePassword");
+        Route.get("user/getaddress", "UserController.getAddress");
+        Route.post("user/address", "UserController.createAddress");
+        Route.get("order/user/:id", "Order.getOrderByUser");
+        Route.post("wxpay/pay", "WxPayController.pay");
+        Route.post("wxpay/notify", "WxPayController.wxPayNotify");
+        Route.post("wxpay/query", "WxPayController.query");
+    })
+    .prefix("api/v1")
+    .namespace("Api/v1")
+    .middleware("auth:jwt");
+
+Route.group(() => {
+        Route.get("user", "UserController.getUser");
+        Route.delete("tag/:id", "TagController.destroy");
+        Route.delete("product/:id/removecat", "ProductController.removeCat");
+        Route.delete("product/:id/removetag", "ProductController.removeTag");
+    })
+    .prefix("api/v1")
+    .namespace("Api/v1")
+    .middleware("auth:jwt")
+    .middleware("role:admin");
+
+Route.group(() => {
+        Route.resource("banner", "BannerController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("vocabulary", "VocabularyController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("category", "CategoryController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("product", "ProductController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("order", "OrderController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+        Route.resource("image", "ImageController").middleware(
+            new Map([
+                [
+                    ["store", "update", "destroy"],
+                    ["auth:jwt", "role:admin"]
+                ]
+            ])
+        )
+    })
+    .prefix("api/v1")
+    .namespace("Api/v1");
