@@ -45,6 +45,12 @@ Route.group(() => {
         Route.get("user", "UserController.getUser");        
         Route.delete("product/:id/removecat", "ProductController.removeCat");
         Route.delete("product/:id/removetag", "ProductController.removeTag");
+        Route.get("getbanneritems/:id", "BannerController.fetchBannerItems");
+        Route.post("banneritem", "BannerController.addBannerItem");
+        Route.get("banneritem/:id", "BannerController.fetchBannerItem");
+        Route.put("banneritem/:id", "BannerController.updateBannerItem");
+        Route.delete("banneritem/:id", "BannerController.removeBannerItem");
+
     })
     .prefix("api/v1")
     .namespace("Api/v1")
@@ -59,7 +65,7 @@ Route.group(() => {
                     ["auth:jwt", "role:admin"]
                 ]
             ])
-        )
+        )        
         Route.resource("image", "ImageController").middleware(
             new Map([
                 [
