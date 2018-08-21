@@ -7,7 +7,7 @@ class Role {
     }, next) {
 
         const user = await auth.getUser()
-        const role = user.toJSON().roles        
+        const role = user.toJSON().roles
         console.log(role)
         if (role !== 'admin') {
             console.log('no permission')

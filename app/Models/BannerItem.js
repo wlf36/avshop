@@ -3,7 +3,7 @@
 const Model = use('Model')
 
 class BannerItem extends Model {
-    image () {
+    image() {
         return this.belongsTo('App/Models/Image', 'image_id', 'id')
     }
 }

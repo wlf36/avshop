@@ -8,7 +8,10 @@ class ImageController {
 
     async create() {}
 
-    async store({ request, response }) {
+    async store({
+        request,
+        response
+    }) {
         const file = request.file("file", {
             types: ["image"],
             size: "2mb"
@@ -52,12 +55,15 @@ class ImageController {
 
     async update() {}
 
-    async destroy({ params, response }) {
+    async destroy({
+        params,
+        response
+    }) {
         const image = await Image.find(params.id);
         console.log(params.id);
         await image.delete();
         return response.send({
-            data: 200,
+            code: 200,
             message: "image delete success"
         });
     }

@@ -63,12 +63,12 @@ class TagController {
         request,
         response
     }) {
-        const id = params.id        
+        const id = params.id
         const {
             name,
             description
         } = request.all()
-        console.log(name,description)
+        console.log(name, description)
         await Tag.query().where('id', id).update({
             name,
             description

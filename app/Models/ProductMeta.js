@@ -2,7 +2,6 @@
 
 const Model = use('Model')
 
-class ProductMeta extends Model {
-}
+class ProductMeta extends Model {}
 
 module.exports = ProductMeta

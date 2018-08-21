@@ -42,7 +42,7 @@ Route.group(() => {
     .middleware("auth:jwt");
 
 Route.group(() => {
-        Route.get("user", "UserController.getUser");        
+        Route.get("user", "UserController.getUser");
         Route.delete("product/:id/removecat", "ProductController.removeCat");
         Route.delete("product/:id/removetag", "ProductController.removeTag");
         Route.get("getbanneritems/:id", "BannerController.fetchBannerItems");
@@ -65,7 +65,7 @@ Route.group(() => {
                     ["auth:jwt", "role:admin"]
                 ]
             ])
-        )        
+        )
         Route.resource("image", "ImageController").middleware(
             new Map([
                 [
@@ -107,7 +107,7 @@ Route.group(() => {
             ])
         )
         Route.resource("order", "OrderController").middleware(
-            new Map([                
+            new Map([
                 [
                     ["index", "store", "update", "destroy"],
                     ["auth:jwt", "role:admin"]

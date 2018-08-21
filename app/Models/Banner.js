@@ -3,7 +3,7 @@
 const Model = use('Model')
 
 class Banner extends Model {
-    item () {
+    item() {
         return this.hasMany('App/Models/BannerItem', 'id', 'banner_id')
     }
 }

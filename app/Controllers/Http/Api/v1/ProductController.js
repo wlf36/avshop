@@ -7,7 +7,10 @@ const Category = use("App/Models/Category");
 const Tag = use("App/Models/Tag");
 
 class ProductController {
-    async index({ request, response }) {
+    async index({
+        request,
+        response
+    }) {
         const perpage = 10;
         const page = request.input("page");
         const products = await Product.query()
@@ -23,7 +26,10 @@ class ProductController {
 
     async create() {}
 
-    async store({ request, response }) {
+    async store({
+        request,
+        response
+    }) {
         const {
             title,
             description,
@@ -87,7 +93,10 @@ class ProductController {
         });
     }
 
-    async show({ params, response }) {
+    async show({
+        params,
+        response
+    }) {
         const id = params.id;
         const product = await Product.getProduct(id);
         // console.log(product.toJSON())
@@ -99,7 +108,11 @@ class ProductController {
 
     async edit() {}
 
-    async update({ params, request, response }) {
+    async update({
+        params,
+        request,
+        response
+    }) {
         const product_id = params.id;
         const {
             title,
@@ -170,7 +183,10 @@ class ProductController {
         });
     }
 
-    async destroy({ params, response }) {
+    async destroy({
+        params,
+        response
+    }) {
         const product = await Product.find(params.id);
         await product.delete();
         return response.send({
@@ -179,8 +195,14 @@ class ProductController {
         });
     }
 
-    async removeCat({ params, request, response }) {
-        const { category } = request.all();
+    async removeCat({
+        params,
+        request,
+        response
+    }) {
+        const {
+            category
+        } = request.all();
         const product_id = params.id;
         const _category = await Category.query()
             .where("name", category)
@@ -196,8 +218,14 @@ class ProductController {
         });
     }
 
-    async removeTag({ params, request, response }) {
-        const { tag } = request.all();
+    async removeTag({
+        params,
+        request,
+        response
+    }) {
+        const {
+            tag
+        } = request.all();
         const product_id = params.id;
         const _tag = await Tag.query()
             .where("name", tag)

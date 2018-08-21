@@ -141,8 +141,8 @@ class BannerController {
         params,
         request,
         response
-    }) {        
-        const id = params.id        
+    }) {
+        const id = params.id
         let {
             image_id,
             banner_id,

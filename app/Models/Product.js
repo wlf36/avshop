@@ -3,13 +3,13 @@
 const Model = use('Model')
 
 class Product extends Model {
-    image () {
+    image() {
         return this.belongsTo('App/Models/Image', 'image_id', 'id')
     }
-    meta () {
+    meta() {
         return this.hasMany('App/Models/ProductMeta', 'id', 'product_id')
-    }  
-    
+    }
+
     category() {
         return this.belongsToMany('App/Models/Category')
             .pivotTable('product_categories')
@@ -17,17 +17,17 @@ class Product extends Model {
 
     tag() {
         return this.belongsToMany('App/Models/Tag')
-        .pivotTable('product_tags')
+            .pivotTable('product_tags')
     }
 
-    static async getProduct (id) {
-      return await Product.query()
-        .where('id', id)        
-        .with('image')
-        .with('meta')
-        .with('category')
-        .with('tag')
-        .fetch()
+    static async getProduct(id) {
+        return await Product.query()
+            .where('id', id)
+            .with('image')
+            .with('meta')
+            .with('category')
+            .with('tag')
+            .fetch()
     }
 
 }
