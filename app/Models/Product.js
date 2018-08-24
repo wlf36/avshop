@@ -3,6 +3,10 @@
 const Model = use('Model')
 
 class Product extends Model {
+    static get hidden() {
+        return ['created_at', 'updated_at']
+    }
+
     image() {
         return this.belongsTo('App/Models/Image', 'image_id', 'id')
     }
@@ -18,6 +22,7 @@ class Product extends Model {
     tag() {
         return this.belongsToMany('App/Models/Tag')
             .pivotTable('product_tags')
+            .withPivot(['tag_id'])
     }
 
     static async getProduct(id) {

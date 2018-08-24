@@ -240,6 +240,57 @@ class ProductController {
             message: "tag delete success"
         });
     }
+
+    async getProductByTag({ request, response }) {
+        const { tag_id } = request.all()        
+
+        // 多tag_id商品
+        // const product = await Tag.query()
+        //     .whereIn('id', tag_id)
+        //     .with('product.image')          
+        //     .fetch()
+
+        const product = await Product.query()
+            .with('image')
+            .with('tag')
+            .whereHas('tag', (builder) => {
+                builder.whereIn('tag_id', tag_id)
+            })
+            .fetch()     
+
+        return response.send({
+            code:200,
+            data: product
+        })
+    }
+
+    async getProductByCat({ request, response }) {
+        const { cat_id } = request.all()
+
+        const product = await Product.query()
+            .with('image')
+            .with('tag')
+            .with('category')
+            .whereHas('category', (builder) => {
+                builder.whereIn('category_id', cat_id)
+            })
+            .fetch()                   
+
+        return response.send({
+            code:200,
+            data: product
+        })
+    }
+
+
+
+
+
+
+
+
+
+
 }
 
 module.exports = ProductController;

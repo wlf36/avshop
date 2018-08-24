@@ -17,11 +17,16 @@ const Route = use("Route");
 
 Route.on("/").render("welcome");
 
+Route.get("api/v1/getkeyword", "Api/v1/KeywordController.getKeyword")
+
 Route.group(() => {
         Route.post("getopenid", "WxPayController.getOpenid");
         Route.post("user/login", "UserController.getToken");
         Route.get("getallcategory", "CategoryController.getAllCategory");
         Route.get("getalltag", "TagController.getAllTag");
+        Route.post("wxpay/pay", "WxPayController.pay");
+        Route.post("getproductbytag", "ProductController.getProductByTag")
+        Route.post("getproductbycat", "ProductController.getProductByCat")
     })
     .prefix("api/v1")
     .namespace("Api/v1");
@@ -33,7 +38,6 @@ Route.group(() => {
         Route.get("user/getaddress", "UserController.getAddress");
         Route.post("user/address", "UserController.createAddress");
         Route.get("order/user/:id", "OrderController.getOrderByUser");
-        Route.post("wxpay/pay", "WxPayController.pay");
         Route.post("wxpay/notify", "WxPayController.wxPayNotify");
         Route.post("wxpay/query", "WxPayController.query");
     })
