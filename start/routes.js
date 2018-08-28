@@ -25,8 +25,11 @@ Route.group(() => {
         Route.get("getallcategory", "CategoryController.getAllCategory");
         Route.get("getalltag", "TagController.getAllTag");
         Route.post("wxpay/pay", "WxPayController.pay");
+        Route.post("wxpay/notify", "WxPayController.wxPayNotify");
+        Route.post("wxpay/query", "WxPayController.query");
         Route.post("getproductbytag", "ProductController.getProductByTag")
         Route.post("getproductbycat", "ProductController.getProductByCat")
+        Route.get("getaddress/:uid", "UserController.getAddress")
     })
     .prefix("api/v1")
     .namespace("Api/v1");
@@ -37,9 +40,8 @@ Route.group(() => {
         Route.put("user/password", "UserController.updatePassword");
         Route.get("user/getaddress", "UserController.getAddress");
         Route.post("user/address", "UserController.createAddress");
-        Route.get("order/user/:id", "OrderController.getOrderByUser");
-        Route.post("wxpay/notify", "WxPayController.wxPayNotify");
-        Route.post("wxpay/query", "WxPayController.query");
+        Route.get("getuserorder", "OrderController.getOrderByUser");
+        Route.get("updateorderstatus/:id", "OrderController.updateOrderStatus");
     })
     .prefix("api/v1")
     .namespace("Api/v1")
@@ -113,7 +115,11 @@ Route.group(() => {
         Route.resource("order", "OrderController").middleware(
             new Map([
                 [
-                    ["index", "store", "update", "destroy"],
+                    ["index", "store"],
+                    ["auth:jwt"]
+                ],
+                [
+                    ["update", "destroy"],
                     ["auth:jwt", "role:admin"]
                 ]
             ])

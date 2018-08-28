@@ -13,7 +13,9 @@ class ProductController {
     }) {
         const perpage = 10;
         const page = request.input("page");
+        console.log(page)
         const products = await Product.query()
+            .setHidden(['body'])
             .with("category")
             .with("tag")
             .orderBy("id", "desc")
@@ -35,7 +37,8 @@ class ProductController {
             description,
             body,
             image_id,
-            price,
+            regular_price,
+            sale_price,
             stock,
             status,
             category,
@@ -50,7 +53,8 @@ class ProductController {
             description,
             body,
             image_id,
-            price,
+            regular_price,
+            sale_price,
             stock,
             status
         });
@@ -119,7 +123,8 @@ class ProductController {
             description,
             body,
             image_id,
-            price,
+            regular_price,
+            sale_price,
             stock,
             status,
             category,
@@ -135,7 +140,8 @@ class ProductController {
                 description,
                 body,
                 image_id,
-                price,
+                regular_price,
+                sale_price,
                 stock,
                 status
             });
@@ -251,6 +257,7 @@ class ProductController {
         //     .fetch()
 
         const product = await Product.query()
+            .setHidden(['body'])
             .with('image')
             .with('tag')
             .whereHas('tag', (builder) => {
@@ -268,6 +275,7 @@ class ProductController {
         const { cat_id } = request.all()
 
         const product = await Product.query()
+            .setHidden(['body'])
             .with('image')
             .with('tag')
             .with('category')
@@ -281,11 +289,6 @@ class ProductController {
             data: product
         })
     }
-
-
-
-
-
 
 
 

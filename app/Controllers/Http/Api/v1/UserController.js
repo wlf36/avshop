@@ -60,18 +60,35 @@ class UserController {
         await UserMeta.createMany(data)
     }
 
+    // async getAddress({
+    //     auth
+    // }) {
+    //     const user = await auth.getUser()
+    //     const uid = user.id
+    //     const _userMeta = await UserMeta.query().where('user_id', uid).fetch()
+    //     const userMeta = _userMeta.toJSON()
+    //     let address = {}
+    //     userMeta.map((item) => {
+    //         address[item.meta_key] = item.meta_value
+    //     })
+    //     return address
+    // }
+
     async getAddress({
-        auth
+        params,
+        response
     }) {
-        const user = await auth.getUser()
-        const uid = user.id
+        const uid = params.uid        
         const _userMeta = await UserMeta.query().where('user_id', uid).fetch()
         const userMeta = _userMeta.toJSON()
         let address = {}
         userMeta.map((item) => {
             address[item.meta_key] = item.meta_value
+        })        
+        return response.send({
+            code: 200,
+            data: address
         })
-        return address
     }
 
     async getToken({
@@ -86,10 +103,10 @@ class UserController {
         } = request.all()
         const token = await auth.withRefreshToken().attempt(username, password)
         // console.log(token)        
-        return {
+        return response.send({
             code: 200,
             data: token
-        }
+        })
     }
 
     async getUserInfo({

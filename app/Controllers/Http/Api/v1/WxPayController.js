@@ -6,23 +6,27 @@ const queryString = use('querystring')
 const convert = use('xml-js')
 const axios = use('axios')
 const WxPayService = use('App/Services/WxPay')
+const User = use('App/Models/User')
 const Order = use('App/Models/Order')
+
 
 class WxPayController {
     /**
      * 获取用户openid  
      */
     async getOpenid({
-        request
+        auth,
+        request,
+        response
     }) {
         /** 小程序 ID */
         const appid = Config.get('wxpay.appid')
         /** 小程序密钥 */
         const secret = Config.get('wxpay.secret')
-        /** 登录凭证 */
-        const js_code = request.input('js_code')
         /** 授权类型 */
         const grant_type = 'authorization_code'
+        /** 登录凭证 */
+        const js_code = request.input('js_code')
 
         /**
          * 请求得到微信用户会话。
@@ -33,7 +37,6 @@ class WxPayController {
             js_code,
             grant_type
         }
-
         const jsCodeToSessionString = queryString.stringify(jsCodeToSessionParams)
         const jsCodeToSessionApi = Config.get('wxpay.api.jsCodeToSession')
         const jsCodeToSessionUrl = `${ jsCodeToSessionApi }?${ jsCodeToSessionString }`
@@ -41,11 +44,30 @@ class WxPayController {
         const wxResponse = await axios.post(jsCodeToSessionUrl)
         const wxSession = wxResponse.data
 
-        wxResponse.data.userid = 1 //临时调试用
-        /**
-         * 返回微信用户会话。
-         */
-        return wxSession
+        const openid = wxSession.openid
+        const _u = await User.findBy('openid', openid)
+
+        let uid = 0
+        if (_u !== null) {
+            const u = _u.toJSON()
+            uid = u.id
+        } else {
+            const userData = {
+                openid
+            }
+            const _user = await User.create(userData)
+            const user = _user.toJSON()
+            uid = user.id
+        }
+
+        const user = await User.find(uid)
+        const token = await auth.withRefreshToken().generate(user)
+
+        return response.send({
+            openid,
+            uid,
+            token
+        })
     }
 
     /**
@@ -155,14 +177,14 @@ class WxPayController {
      * 处理支付结果通知，
      * 支付成功以后，微信会发送支付结果给我们。   
      */
-    wxPayNotify({
+    async wxPayNotify({
         request
     }) {
 
         /**
          * 获取并处理通知里的支付结果，
          * 结果数据是 xml 格式，所以需要把它转换成 object。
-         */
+         */        
         const _payment = convert.xml2js(request._raw, {
             compact: true,
             cdataKey: 'value',
@@ -198,8 +220,11 @@ class WxPayController {
 
         if (return_code == 'SUCCESS') {
             console.log('执行业务逻辑')
+            //更新订单付款状态
+            await Order.query().where('id', payment.out_trade_no).update({
+                status: 2
+            })
         }
-
 
         const reply = {
             xml: {

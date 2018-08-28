@@ -20,6 +20,8 @@ class OrderService {
         this.uid = uid
 
         const status = this.getOrderStatus()
+        // console.log(status)
+
         // return status
         if (!status['pass']) {
             status['order_id'] = -1
@@ -28,6 +30,7 @@ class OrderService {
 
         //开始创建订单
         const orderSnap = await this.snapOrder(status)
+        // console.log(orderSnap)
         let order = await this.createOrder(orderSnap)
         order.pass = true
         return order
@@ -42,7 +45,7 @@ class OrderService {
         const products = await Product.query()
             .whereIn('id', oPIDs)
             .with('image')
-            .setVisible(['id', 'title', 'price', 'stock', 'image'])
+            .setVisible(['id', 'title', 'regular_price', 'sale_price', 'stock', 'image'])
             .fetch()
         return products.toJSON()
     }
@@ -64,8 +67,7 @@ class OrderService {
             status.orderPrice += pStatus.totalPrice
             status.totalCount += pStatus.counts
             status.pStatusArray.push(pStatus)
-        })
-
+        })        
         return status;
     }
 
@@ -92,19 +94,17 @@ class OrderService {
 
         } else {
             const product = products[pIndex]
-
             pStatus.id = product.id
             pStatus.title = product.title
             pStatus.counts = oCount
-            pStatus.price = product.price
+            pStatus.price = product.sale_price ? product.sale_price : product.regular_price
             // pStatus.main_img_url = product.main_img_url
-            pStatus.totalPrice = product.price * oCount
+            pStatus.totalPrice = pStatus.price * oCount
 
             if (product.stock - oCount >= 0) {
                 pStatus.haveStock = true
             }
         }
-        // console.log(pStatus)
         return pStatus
     }
 
@@ -152,13 +152,13 @@ class OrderService {
             total_price: snap.orderPrice,
             total_count: snap.totalCount,
             snap_img: snap.snapImg,
+            status: 1,
             snap_name: snap.snapName,
             snap_address: JSON.stringify(snap.snapAddress),
             snap_items: JSON.stringify(snap.pStatus)
         }
-
+        
         const order = await Order.create(data)
-
         const orderID = order.id
         const create_time = order.created_at
 
@@ -174,11 +174,10 @@ class OrderService {
         await OrderProduct.createMany(orderProduct)
 
         return {
-            // 'order_no': orderNo,
+            'order_no': orderNo,
             'order_id': orderID,
             'create_time': create_time
         }
-
     }
 
     makeOrderNo() {
