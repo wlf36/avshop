@@ -7,11 +7,11 @@ const UserMeta = use('App/Models/UserMeta')
 class UserController {
 
     async createAddress({
+        auth,
         request,
-        auth
+        response
     }) {
-        const user = await auth.getUser()
-        const uid = user.id
+        const uid = auth.user.id
         const {
             userName,
             postalCode,
@@ -57,34 +57,24 @@ class UserController {
                 meta_value: telNumber
             }
         ]
-        await UserMeta.createMany(data)
+        const address = await UserMeta.createMany(data)
+        return response.send({
+            code: 200,
+            data: address
+        })
     }
 
-    // async getAddress({
-    //     auth
-    // }) {
-    //     const user = await auth.getUser()
-    //     const uid = user.id
-    //     const _userMeta = await UserMeta.query().where('user_id', uid).fetch()
-    //     const userMeta = _userMeta.toJSON()
-    //     let address = {}
-    //     userMeta.map((item) => {
-    //         address[item.meta_key] = item.meta_value
-    //     })
-    //     return address
-    // }
-
     async getAddress({
-        params,
+        auth,
         response
     }) {
-        const uid = params.uid        
+        const uid = auth.user.id
         const _userMeta = await UserMeta.query().where('user_id', uid).fetch()
         const userMeta = _userMeta.toJSON()
         let address = {}
         userMeta.map((item) => {
             address[item.meta_key] = item.meta_value
-        })        
+        })
         return response.send({
             code: 200,
             data: address
@@ -189,6 +179,24 @@ class UserController {
             code: 200,
             data: users
         })
+    }
+
+    async updateUserInfo({
+        auth,
+        request,
+        response
+    }) {
+        const uid = auth.user.id
+        console.log(uid)
+        const { nickName, avatarUrl } = request.all()
+        const _user = await auth.getUser()
+        const user = _user.toJSON()
+        if(user.nickName == null){
+            await User.query().where('id', uid).update({
+                nickName,
+                avatarUrl
+            })
+        }
     }
 
 }

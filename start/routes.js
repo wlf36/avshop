@@ -1,18 +1,5 @@
 "use strict";
 
-/*
-|--------------------------------------------------------------------------
-| Routes
-|--------------------------------------------------------------------------
-|
-| Http routes are entry points to your web application. You can create
-| routes for different URL's and bind Controller actions to them.
-|
-| A complete guide on routing is available here.
-| http://adonisjs.com/docs/4.1/routing
-|
-*/
-
 const Route = use("Route");
 
 Route.on("/").render("welcome");
@@ -28,8 +15,7 @@ Route.group(() => {
         Route.post("wxpay/notify", "WxPayController.wxPayNotify");
         Route.post("wxpay/query", "WxPayController.query");
         Route.post("getproductbytag", "ProductController.getProductByTag")
-        Route.post("getproductbycat", "ProductController.getProductByCat")
-        Route.get("getaddress/:uid", "UserController.getAddress")
+        Route.post("getproductbycat", "ProductController.getProductByCat")        
     })
     .prefix("api/v1")
     .namespace("Api/v1");
@@ -38,10 +24,11 @@ Route.group(() => {
         Route.get("user/info", "UserController.getUserInfo");
         Route.post("user/logout", "UserController.logout");
         Route.put("user/password", "UserController.updatePassword");
-        Route.get("user/getaddress", "UserController.getAddress");
-        Route.post("user/address", "UserController.createAddress");
+        Route.get("address", "UserController.getAddress");
+        Route.post("address", "UserController.createAddress");
         Route.get("getuserorder", "OrderController.getOrderByUser");
         Route.get("updateorderstatus/:id", "OrderController.updateOrderStatus");
+        Route.put("updateuserinfo", "UserController.updateUserInfo")
     })
     .prefix("api/v1")
     .namespace("Api/v1")

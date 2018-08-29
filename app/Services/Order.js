@@ -80,7 +80,7 @@ class OrderService {
             'price': 0,
             'title': '',
             'totalPrice': 0,
-            'main_img_url': null
+            'image': null
         }
 
         for (let i = 0; i < products.length; i++) {
@@ -98,7 +98,7 @@ class OrderService {
             pStatus.title = product.title
             pStatus.counts = oCount
             pStatus.price = product.sale_price ? product.sale_price : product.regular_price
-            // pStatus.main_img_url = product.main_img_url
+            pStatus.image = product.image.url
             pStatus.totalPrice = pStatus.price * oCount
 
             if (product.stock - oCount >= 0) {
@@ -124,7 +124,7 @@ class OrderService {
         snap.pStatus = status.pStatusArray
         snap.snapAddress = await this.getUserAddress()
         snap.snapName = this.products[0].title
-        snap.snapImg = this.products[0].main_img_url
+        snap.snapImg = this.products[0].image.url
 
         if (this.products.length > 1) {
             snap.snapName += '等'

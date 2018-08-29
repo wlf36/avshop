@@ -196,7 +196,7 @@ class WxPayController {
             return accumulator
         }, {})
 
-        console.log('支付结果：', payment)
+        // console.log('支付结果：', payment)
 
         /**
          * 验证支付结果，
@@ -204,24 +204,24 @@ class WxPayController {
          * 这里我只验证了签名。
          */
         const paymentSign = payment.sign
-        console.log('结果签名：', paymentSign)
+        // console.log('结果签名：', paymentSign)
 
         delete payment['sign']
         const key = Config.get('wxpay.key')
         const selfSign = WxPayService.wxPaySign(payment, key)
-        console.log('自制签名：', selfSign)
+        // console.log('自制签名：', selfSign)
 
         /**
          * 构建回复数据，
          * 验证之后，要把验证的结果告诉微信支付系统。
          */
         const return_code = paymentSign === selfSign ? 'SUCCESS' : 'FAIL'
-        console.log('回复代码：', return_code)
+        // console.log('回复代码：', return_code)
 
         if (return_code == 'SUCCESS') {
-            console.log('执行业务逻辑')
+            console.log('更新订单状态', payment.out_trade_no )
             //更新订单付款状态
-            await Order.query().where('id', payment.out_trade_no).update({
+            await Order.query().where('order_no', payment.out_trade_no).update({
                 status: 2
             })
         }
